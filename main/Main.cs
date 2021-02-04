@@ -13,9 +13,8 @@ namespace ProyectoVSC{
             aux = (ConjuntoCuadrado)ficha.getForma();
             Console.WriteLine(aux.getTamano());
 
-            int total = 0;
             List<Cuadro> vicitados = new List<Cuadro>();
-            aux.getPrincipal().recorrer(vicitados,total,aux.getTamano());
+            aux.getPrincipal().recorrer(aux.getTamano(),1,vicitados);
         }
     }
 }
