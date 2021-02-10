@@ -4,66 +4,36 @@ using System.Collections.Generic;
 namespace ProyectoVSC{
 
     class Cuadro{
-        
-        private Cuadro arriba;
-        private Cuadro abajo;
-        private Cuadro izquierda;
-        private Cuadro derecha;
-        private Cuadro vecinoArriba;
-        private Cuadro vecinoAbajo;
-        private Cuadro vecinoIzquierda;
-        private Cuadro vecinoDerecha;
+
+        private EnlaceConjunto enlaceConjunto;
+        private EnlaceVecino enlaceVecino;
+        private Posicion posicion;
         private int indice;
 
         public Cuadro(){
-            this.arriba = null;
-            this.abajo = null;
-            this.izquierda = null;
-            this.derecha = null;
-            this.vecinoArriba = null;
-            this.vecinoDerecha = null;
-            this.vecinoIzquierda = null;
-            this.vecinoAbajo = null;
+            enlaceVecino = new EnlaceVecino();
+            enlaceConjunto = new EnlaceConjunto();
+            posicion = new Posicion();
         }
 
-        public Cuadro getVecinoArriba()
+        public EnlaceConjunto getEnlaceConjunto()
         {
-            return this.vecinoArriba;
+            return this.enlaceConjunto;
         }
 
-        public void setVecinoArriba(Cuadro vecinoArriba)
+        public void setEnlaceConjunto(EnlaceConjunto enlaceConjunto)
         {
-            this.vecinoArriba = vecinoArriba;
+            this.enlaceConjunto = enlaceConjunto;
         }
 
-        public Cuadro getVecinoAbajo()
+        public EnlaceVecino getEnlaceVecino()
         {
-            return this.vecinoAbajo;
+            return this.enlaceVecino;
         }
 
-        public void setVecinoAbajo(Cuadro vecinoAbajo)
+        public void setEnlaceVecino(EnlaceVecino enlaceVecino)
         {
-            this.vecinoAbajo = vecinoAbajo;
-        }
-
-        public Cuadro getVecinoIzquierda()
-        {
-            return this.vecinoIzquierda;
-        }
-
-        public void setVecinoIzquierda(Cuadro vecinoIzquierda)
-        {
-            this.vecinoIzquierda = vecinoIzquierda;
-        }
-
-        public Cuadro getVecinoDerecha()
-        {
-            return this.vecinoDerecha;
-        }
-
-        public void setVecinoDerecha(Cuadro vecinoDerecha)
-        {
-            this.vecinoDerecha = vecinoDerecha;
+            this.enlaceVecino = enlaceVecino;
         }
 
         public int getIndice()
@@ -76,77 +46,74 @@ namespace ProyectoVSC{
             this.indice = indice;
         }
 
-        public Cuadro getArriba() {
-            return this.arriba;
+        public Posicion getPosicion()
+        {
+            return this.posicion;
         }
 
-        public void setArriba(Cuadro arriba) {
-            this.arriba = arriba;
+        public void setPosicion(Posicion posicion)
+        {
+            this.posicion = posicion;
         }
 
-        public Cuadro getAbajo() {
-            return this.abajo;
-        }
-
-        public void setAbajo(Cuadro abajo) {
-            this.abajo = abajo;
-        }
-
-        public Cuadro getIzquierda() {
-            return this.izquierda;
-        }
-
-        public void setIzquierda(Cuadro izquierda) {
-            this.izquierda = izquierda;
-        }
-
-        public Cuadro getDerecha() {
-            return this.derecha;
-        }
-
-        public void setDerecha(Cuadro derecha) {
-            this.derecha = derecha;
-        }
-
-        public void combinar(Cuadro c){
+        public void combinar(Cuadro c,int x, int y){
             Random r = new Random();
+            Posicion posicionAux = new Posicion();
+            List<Cuadro> visitados = new List<Cuadro>();
+            Cuadro cuadro = new Cuadro();
             int aux = r.Next(3);
             
             if(aux == 0){
-                if(this.arriba == null){
-                    this.arriba = c;
-                    c.setAbajo(this); 
-                    Console.WriteLine("this.arriba = c, c.indice "+c.indice+" this,indice "+ this.indice);
+                y += 1;
+                posicionAux.setX(x);
+                posicionAux.setY(y);
+                if(this.enlaceConjunto.getArriba() == null && this.buscarCoordenadas(posicionAux,visitados, cuadro) == null){
+                    this.enlaceConjunto.setArriba(c);
+                    c.getEnlaceConjunto().setAbajo(this);
+                    c.getPosicion().setX(x);
+                    c.getPosicion().setY(y); 
                     return;   
-                }else{
-                    this.arriba.combinar(c);
+                }else{ 
+                    this.enlaceConjunto.getArriba().combinar(c,x,y);
                 }
             }else if(aux == 1){
-                if(this.derecha == null){
-                    this.derecha = c;
-                    c.setIzquierda(this);
-                    Console.WriteLine("this.derecha = c, c.indice "+c.indice+" this,indice "+ this.indice);
+                x += 1;
+                posicionAux.setX(x);
+                posicionAux.setY(y);
+                if(this.enlaceConjunto.getDerecha() == null && this.buscarCoordenadas(posicionAux,visitados, cuadro) == null){
+                    this.enlaceConjunto.setDerecha(c);
+                    c.getEnlaceConjunto().setIzquierda(this);
+                    c.getPosicion().setX(x);
+                    c.getPosicion().setY(y);
                     return;
-                }else{
-                    this.derecha.combinar(c);
+                }else{           
+                    this.enlaceConjunto.getDerecha().combinar(c,x,y);
                 }
             }else if(aux == 2){
-                if(this.abajo == null){
-                    this.abajo = c;
-                    c.setArriba(this);
-                    Console.WriteLine("this.abajo = c, c.indice "+c.indice+" this,indice "+ this.indice);
+                y -= 1;
+                posicionAux.setX(x);
+                posicionAux.setY(y);
+                if(this.enlaceConjunto.getAbajo() == null && this.buscarCoordenadas(posicionAux,visitados, cuadro) == null){
+                    this.enlaceConjunto.setAbajo(c);
+                    c.getEnlaceConjunto().setArriba(this);
+                    c.getPosicion().setX(x);
+                    c.getPosicion().setY(y);
                     return;
                 }else{
-                    this.abajo.combinar(c);
+                    this.enlaceConjunto.getAbajo().combinar(c,x,y);
                 }
             }else{
-                if(this.izquierda == null){
-                    this.izquierda = c;
-                    c.setDerecha(this);
-                    Console.WriteLine("this.izquierda = c, c.indice "+c.indice+" this,indice "+ this.indice);
+                x -= 1;
+                posicionAux.setX(x);
+                posicionAux.setY(y);
+                if(this.enlaceConjunto.getIzquierda() == null && this.buscarCoordenadas(posicionAux,visitados, cuadro) == null){
+                    this.enlaceConjunto.setIzquierda(c);
+                    c.getEnlaceConjunto().setDerecha(this);
+                    c.getPosicion().setX(x);
+                    c.getPosicion().setY(y);
                     return;
-                }else{
-                    this.izquierda.combinar(c);
+                }else{                  
+                    this.enlaceConjunto.getIzquierda().combinar(c,x,y);
                 }
             }
             
@@ -158,62 +125,53 @@ namespace ProyectoVSC{
                 return;
             }
             if(this.indice != indiceActual){
-                if((this.arriba!= null)&&(!visitados.Contains(this.arriba))){
-                    this.arriba.recorrer(tamano,indiceActual,visitados);
+                if((this.enlaceConjunto.getArriba()!= null)&&(!visitados.Contains(this.enlaceConjunto.getArriba()))){
+                    this.enlaceConjunto.getArriba().recorrer(tamano,indiceActual,visitados);
                 }
-                if((this.derecha!= null)&&(!visitados.Contains(this.derecha))){
-                    this.derecha.recorrer(tamano,indiceActual,visitados);
+                if((this.enlaceConjunto.getDerecha()!= null)&&(!visitados.Contains(this.enlaceConjunto.getDerecha()))){
+                    this.enlaceConjunto.getDerecha().recorrer(tamano,indiceActual,visitados);
                 }
-                if((this.abajo!=  null)&&(!visitados.Contains(this.abajo))){
-                    this.abajo.recorrer(tamano,indiceActual,visitados);
+                if((this.enlaceConjunto.getAbajo()!=  null)&&(!visitados.Contains(this.enlaceConjunto.getAbajo()))){
+                    this.enlaceConjunto.getAbajo().recorrer(tamano,indiceActual,visitados);
                 }
-                if((this.izquierda!= null)&&(!visitados.Contains(this.izquierda))){
-                    this.izquierda.recorrer(tamano,indiceActual,visitados);
+                if((this.enlaceConjunto.getIzquierda()!= null)&&(!visitados.Contains(this.enlaceConjunto.getIzquierda()))){
+                    this.enlaceConjunto.getIzquierda().recorrer(tamano,indiceActual,visitados);
                 }
             }else{
                 indiceActual += 1;
                 visitados.Clear();
-                if((this.arriba!= null)&&(!visitados.Contains(this.arriba))){
-                    this.arriba.recorrer(tamano,indiceActual,visitados);
+                if((this.enlaceConjunto.getArriba()!= null)&&(!visitados.Contains(this.enlaceConjunto.getArriba()))){
+                    this.enlaceConjunto.getArriba().recorrer(tamano,indiceActual,visitados);
                 }
-                if((this.derecha!= null)&&(!visitados.Contains(this.derecha))){
-                    this.derecha.recorrer(tamano,indiceActual,visitados);
+                if((this.enlaceConjunto.getDerecha()!= null)&&(!visitados.Contains(this.enlaceConjunto.getDerecha()))){
+                    this.enlaceConjunto.getDerecha().recorrer(tamano,indiceActual,visitados);
                 }
-                if((this.abajo!=  null)&&(!visitados.Contains(this.abajo))){
-                    this.abajo.recorrer(tamano,indiceActual,visitados);
+                if((this.enlaceConjunto.getAbajo()!=  null)&&(!visitados.Contains(this.enlaceConjunto.getAbajo()))){
+                    this.enlaceConjunto.getAbajo().recorrer(tamano,indiceActual,visitados);
                 }
-                if((this.izquierda!= null)&&(!visitados.Contains(this.izquierda))){
-                    this.izquierda.recorrer(tamano,indiceActual,visitados);
+                if((this.enlaceConjunto.getIzquierda()!= null)&&(!visitados.Contains(this.enlaceConjunto.getIzquierda()))){
+                    this.enlaceConjunto.getIzquierda().recorrer(tamano,indiceActual,visitados);
                 }
             }
         }
     
-        public bool lugarOcupado(Cuadro c, Cuadro vecino){
-            bool estaOcupado = true;
-            if((c == null)&&(vecino == null)){
-                estaOcupado = false;
-            }
-            return estaOcupado;
-        }
-
         public Cuadro buscarCuadro(int indice,List<Cuadro> visitados,Cuadro cuadro){
             visitados.Add(this);
             //Cuadro cuadro = new Cuadro();
             if(this.indice != indice){
-                if((this.arriba!= null)&&(!visitados.Contains(this.arriba))){
-                    cuadro = this.arriba.buscarCuadro(indice,visitados,cuadro);
+                if((this.enlaceConjunto.getArriba()!= null)&&(!visitados.Contains(this.enlaceConjunto.getArriba()))){
+                    cuadro = this.enlaceConjunto.getArriba().buscarCuadro(indice,visitados,cuadro);
                 }
-                if((this.derecha!= null)&&(!visitados.Contains(this.derecha))){
-                    cuadro = this.derecha.buscarCuadro(indice,visitados,cuadro);
+                if((this.enlaceConjunto.getDerecha()!= null)&&(!visitados.Contains(this.enlaceConjunto.getDerecha()))){
+                    cuadro = this.enlaceConjunto.getDerecha().buscarCuadro(indice,visitados,cuadro);
                 }
-                if((this.abajo!=  null)&&(!visitados.Contains(this.abajo))){
-                    cuadro = this.abajo.buscarCuadro(indice,visitados,cuadro);
+                if((this.enlaceConjunto.getAbajo()!=  null)&&(!visitados.Contains(this.enlaceConjunto.getAbajo()))){
+                    cuadro = this.enlaceConjunto.getAbajo().buscarCuadro(indice,visitados,cuadro);
                 }
-                if((this.izquierda!= null)&&(!visitados.Contains(this.izquierda))){
-                    cuadro = this.izquierda.buscarCuadro(indice,visitados,cuadro);
+                if((this.enlaceConjunto.getIzquierda()!= null)&&(!visitados.Contains(this.enlaceConjunto.getIzquierda()))){
+                    cuadro = this.enlaceConjunto.getIzquierda().buscarCuadro(indice,visitados,cuadro);
                 }
             }else{
-                //Console.WriteLine(this.indice + " indice en BuscarCuadro");
                 return this;
             }
             if(this.indice == indice){
@@ -224,36 +182,60 @@ namespace ProyectoVSC{
 
         public List<int> recorrerFila(List<int> encontrados,List<Cuadro> visitado){
             if(!visitado.Contains(this)){visitado.Add(this);encontrados.Add(this.indice);}
-            if((!visitado.Contains(this.derecha))&&(this.derecha != null)){
-                this.derecha.recorrerFila(encontrados,visitado);
+            if((!visitado.Contains(this.enlaceConjunto.getDerecha()))&&(this.enlaceConjunto.getDerecha() != null)){
+                this.enlaceConjunto.getDerecha().recorrerFila(encontrados,visitado);
             }
-            if((!visitado.Contains(this.izquierda))&&(this.izquierda!= null)){
-                this.izquierda.recorrerFila(encontrados,visitado);
+            if((!visitado.Contains(this.enlaceConjunto.getIzquierda()))&&(this.enlaceConjunto.getIzquierda()!= null)){
+                this.enlaceConjunto.getIzquierda().recorrerFila(encontrados,visitado);
             }
-            if(!visitado.Contains(this.vecinoDerecha)&&(this.vecinoDerecha != null)){
-                this.vecinoDerecha.recorrerFila(encontrados,visitado);
+            if(!visitado.Contains(this.enlaceVecino.getVecinoDerecha())&&(this.enlaceVecino.getVecinoDerecha() != null)){
+                this.enlaceVecino.getVecinoDerecha().recorrerFila(encontrados,visitado);
             }
-            if((!visitado.Contains(this.vecinoIzquierda))&&(this.vecinoIzquierda != null)){
-                this.vecinoIzquierda.recorrerFila(encontrados,visitado);
+            if((!visitado.Contains(this.enlaceVecino.getVecinoIzquierda()))&&(this.enlaceVecino.getVecinoIzquierda() != null)){
+                this.enlaceVecino.getVecinoIzquierda().recorrerFila(encontrados,visitado);
             }
             return encontrados;
         }
 
         public List<int> recorrerColumna(List<int> encontrados,List<Cuadro> visitado){
             if(!visitado.Contains(this)){visitado.Add(this);encontrados.Add(this.indice);}
-            if((!visitado.Contains(this.arriba))&&(this.arriba != null)){
-                this.arriba.recorrerColumna(encontrados,visitado);
+            if((!visitado.Contains(this.enlaceConjunto.getArriba()))&&(this.enlaceConjunto.getArriba() != null)){
+                this.enlaceConjunto.getArriba().recorrerColumna(encontrados,visitado);
             }
-            if((!visitado.Contains(this.abajo))&&(this.abajo != null)){
-                this.abajo.recorrerColumna(encontrados,visitado);
+            if((!visitado.Contains(this.enlaceConjunto.getAbajo()))&&(this.enlaceConjunto.getAbajo() != null)){
+                this.enlaceConjunto.getAbajo().recorrerColumna(encontrados,visitado);
             }
-            if((!visitado.Contains(this.vecinoArriba))&&(this.vecinoArriba != null)){
-                this.vecinoArriba.recorrerColumna(encontrados,visitado);
+            if((!visitado.Contains(this.enlaceVecino.getVecinoArriba()))&&(this.enlaceVecino.getVecinoArriba() != null)){
+                this.enlaceVecino.getVecinoArriba().recorrerColumna(encontrados,visitado);
             }
-            if((!visitado.Contains(this.vecinoAbajo))&&(this.vecinoAbajo != null)){
-                this.vecinoAbajo.recorrerColumna(encontrados,visitado);
+            if((!visitado.Contains(this.enlaceVecino.getVecinoAbajo()))&&(this.enlaceVecino.getVecinoAbajo() != null)){
+                this.enlaceVecino.getVecinoAbajo().recorrerColumna(encontrados,visitado);
             }
             return encontrados;
+        }
+
+        public Cuadro buscarCoordenadas(Posicion posicion,List<Cuadro> visitados,Cuadro cuadro){
+            visitados.Add(this);
+            if(this.posicion.getX() != posicion.getX() || this.posicion.getY() != posicion.getY()){
+                if((this.enlaceConjunto.getArriba()!= null)&&(!visitados.Contains(this.enlaceConjunto.getArriba()))){
+                    cuadro = this.enlaceConjunto.getArriba().buscarCoordenadas(posicion,visitados,cuadro);
+                }
+                if((this.enlaceConjunto.getDerecha()!= null)&&(!visitados.Contains(this.enlaceConjunto.getDerecha()))){
+                    cuadro = this.enlaceConjunto.getDerecha().buscarCoordenadas(posicion,visitados,cuadro);
+                }
+                if((this.enlaceConjunto.getAbajo()!=  null)&&(!visitados.Contains(this.enlaceConjunto.getAbajo()))){
+                    cuadro = this.enlaceConjunto.getAbajo().buscarCoordenadas(posicion,visitados,cuadro);
+                }
+                if((this.enlaceConjunto.getIzquierda()!= null)&&(!visitados.Contains(this.enlaceConjunto.getIzquierda()))){
+                    cuadro = this.enlaceConjunto.getIzquierda().buscarCoordenadas(posicion,visitados,cuadro);
+                }
+            }else{
+                return this;
+            }
+            if(this.posicion.getX() != posicion.getX() && this.posicion.getY() != posicion.getY()){
+                return this;
+            }
+            return null;
         }
     }
 }
